@@ -39,7 +39,9 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) {
-    // TODO
+    ResponseEntity imgFile = new ClassPathResource("image/sid.jpg");
+    response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+    StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
