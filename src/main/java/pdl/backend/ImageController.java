@@ -6,14 +6,19 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.annotation.JacksonInject.Value;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StreamUtils;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +44,9 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) {
-    ResponseEntity imgFile = new ClassPathResource("image/sid.jpg");
-    response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-    StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    var imgFile = new ClassPathResource("/images/" + id + ".jpg");
+
+    return new ResponseEntity<>(imgFile);
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
