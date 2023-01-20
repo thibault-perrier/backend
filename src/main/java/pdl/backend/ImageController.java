@@ -88,7 +88,6 @@ public class ImageController {
       ObjectNode o = mapper.createObjectNode();
       o.put("id", img.getId());
       o.put("name", img.getName());
-      o.put("data", img.getData());
       nodes.add(o);
     }
     return nodes;
