@@ -3,6 +3,9 @@ package pdl.backend;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,39 +50,47 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) {
-    var imgFile = new ClassPathResource("/images/" + id);
     var imgSave = imageDao.retrieve(id);
-    if (!imgSave.isPresent())
+    if (imgSave.isEmpty())
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    try {
-      return ResponseEntity
-          .ok()
-          .contentType(MediaType.IMAGE_JPEG)
-          .body(new InputStreamResource(imgFile.getInputStream()));
-    } catch (Exception e) {
-      System.out.println("Couldn't fetch the image : " + e);
-      return null;
-    }
+    return ResponseEntity
+        .ok()
+        .contentType(MediaType.IMAGE_JPEG)
+        .body(imgSave.get().getData());
+
   }
 
   @DeleteMapping(value = "/images/{id}")
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
-    imageDao.delete(imageDao.retrieve(id).get());
+    var imgSave = imageDao.retrieve(id);
+    if (imgSave.isEmpty())
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    imageDao.delete(imgSave.get());
     return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
   }
 
-  @RequestMapping(value = "/images", method = RequestMethod.POST)
-  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
-      RedirectAttributes redirectAttributes) {
-    // TODO
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+  @PostMapping(value = "/images")
+  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    try {
+      Image img = new Image(file.getOriginalFilename(), file.getBytes());
+      imageDao.create(img);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
   public ArrayNode getImageList() {
     ArrayNode nodes = mapper.createArrayNode();
-    // TODO
+    for (Image img : imageDao.retrieveAll()) {
+      ObjectNode o = mapper.createObjectNode();
+      o.put("id", img.getId());
+      o.put("name", img.getName());
+      o.put("data", img.getData());
+      nodes.add(o);
+    }
     return nodes;
   }
 
