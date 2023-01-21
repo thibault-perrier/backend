@@ -26,20 +26,20 @@ public class ImageControllerTests {
 
 	@BeforeAll
 	public static void reset() {
-  	// reset Image class static counter
-  	ReflectionTestUtils.setField(Image.class, "count", Long.valueOf(0));
+		// reset Image class static counter
+		ReflectionTestUtils.setField(Image.class, "count", Long.valueOf(0));
 	}
 
 	@Test
 	@Order(1)
 	public void getImageListShouldReturnSuccess() throws Exception {
-		// TODO
+		this.mockMvc.perform(get("/images")).andDo(print()).andExpect(status().isOk());
 	}
 
 	@Test
 	@Order(2)
 	public void getImageShouldReturnNotFound() throws Exception {
-		// TODO
+		this.mockMvc.perform(get("/images/999999")).andDo(print()).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -77,5 +77,5 @@ public class ImageControllerTests {
 	public void createImageShouldReturnUnsupportedMediaType() throws Exception {
 		// TODO
 	}
-	
+
 }
