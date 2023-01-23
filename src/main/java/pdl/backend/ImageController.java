@@ -48,7 +48,7 @@ public class ImageController {
     this.imageDao = imageDao;
   }
 
-  @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+  @RequestMapping(value = "/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) {
     var imgSave = imageDao.retrieve(id);
     if (imgSave.isEmpty())
@@ -80,7 +80,7 @@ public class ImageController {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "/images", produces = "application/json; charset=UTF-8")
   @ResponseBody
   public ArrayNode getImageList() {
     ArrayNode nodes = mapper.createArrayNode();

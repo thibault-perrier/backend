@@ -1,6 +1,7 @@
 package pdl.backend;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,37 +46,38 @@ public class ImageControllerTests {
 	@Test
 	@Order(3)
 	public void getImageShouldReturnSuccess() throws Exception {
-		// TODO
+		this.mockMvc.perform(get("/images/0")).andDo(print()).andExpect(status().isOk());
 	}
 
 	@Test
 	@Order(4)
 	public void deleteImagesShouldReturnMethodNotAllowed() throws Exception {
-		// TODO
+		this.mockMvc.perform(delete("/images")).andDo(print()).andExpect(status().isMethodNotAllowed());
 	}
 
 	@Test
 	@Order(5)
 	public void deleteImageShouldReturnNotFound() throws Exception {
-		// TODO
+		this.mockMvc.perform(delete("/images/999999")).andDo(print()).andExpect(status().isNotFound());
 	}
 
 	@Test
 	@Order(6)
 	public void deleteImageShouldReturnSuccess() throws Exception {
-		// TODO
+		this.mockMvc.perform(delete("/images/0")).andDo(print()).andExpect(status().isOk());
 	}
 
 	@Test
 	@Order(7)
 	public void createImageShouldReturnSuccess() throws Exception {
-		// TODO
+		// this.mockMvc.perform(post(null,
+		// null)).andDo(print()).andExpect(status().isOk());
 	}
 
 	@Test
 	@Order(8)
 	public void createImageShouldReturnUnsupportedMediaType() throws Exception {
-		// TODO
+		// this.mockMvc.perform().andDo(print()).andExpect(status().isUnsupportedMediaType());
 	}
 
 }
