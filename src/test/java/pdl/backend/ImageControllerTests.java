@@ -1,7 +1,7 @@
 package pdl.backend;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,8 +14,10 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -70,14 +72,17 @@ public class ImageControllerTests {
 	@Test
 	@Order(7)
 	public void createImageShouldReturnSuccess() throws Exception {
-		// this.mockMvc.perform(post(null,
-		// null)).andDo(print()).andExpect(status().isOk());
+		MockMultipartFile file = new MockMultipartFile("file", "image.png", MediaType.IMAGE_JPEG_VALUE,
+				"image".getBytes());
+		this.mockMvc.perform(multipart("/images/", 0).file(file)).andDo(print()).andExpect(status().isOk());
 	}
 
 	@Test
 	@Order(8)
 	public void createImageShouldReturnUnsupportedMediaType() throws Exception {
-		// this.mockMvc.perform().andDo(print()).andExpect(status().isUnsupportedMediaType());
+		MockMultipartFile file = new MockMultipartFile("file", "image.png", MediaType.IMAGE_GIF_VALUE,
+				"image".getBytes());
+		this.mockMvc.perform(multipart("/images/", 0).file(file)).andDo(print())
+				.andExpect(status().isUnsupportedMediaType());
 	}
-
 }
